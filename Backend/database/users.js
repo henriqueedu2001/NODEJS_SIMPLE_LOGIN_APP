@@ -84,22 +84,6 @@ async function autheticateCredentials(email, password) {
             sucess = true;
         }
     }
-    
-    /*
-    if(users.length == 1){
-        let dbPassword = users[0].dataValues.password;
-        let dbSalt = users[0].dataValues.salt;
-
-        console.log(users[0].dataValues);
-
-        if(sha256(dbSalt + password) == dbPassword) {
-            sucess = true;
-            console.log('sucess!!!!!');
-            return true;
-        }
-    }
-    */
-    
 
     return sucess;
 }

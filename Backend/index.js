@@ -19,15 +19,25 @@ user.autheticateCredentials('rafael@gmail.com', 'rafael123').then((response) => 
 const port = 2020
 app.use(express.json())
 
-app.get('/users/:email/:password', (req, res) => {
+app.get('/users/authenticate/:email/:password', (req, res) => {
     var auth = false;
     user.autheticateCredentials(req.params.email, req.params.password).then((response) => {
         auth = response;
         console.log('sdnsdnfj: ' + response);
-        res.json({'email': req.params.email, 'password': req.params.password, 'authenticate': auth});
+        res.json({
+            'email': req.params.email, 
+            'password': req.params.password, 
+            'authenticate': auth
+        });
     });
-    
 })
+
+app.post('/users/register/:email/:password', (req, res) => {
+    user.registerCredentials(
+        req.params.email,
+        req.params.password
+    );
+});
 
 app.listen(port, (error) => {
     if(error) {

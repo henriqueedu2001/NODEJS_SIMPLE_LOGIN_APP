@@ -4,20 +4,29 @@ const app = express();
 
 const user = require('./database/users');
 
-
-(async () => {
-    
-})()
-
-user.registerUser('rafael@gmail.com', 'rafael123');
-
 /*
+user.registerCredentials('rafael@gmail.com', 'rafael123');
+user.registerCredentials('henrique_eduardo_souza@hotmail.com', 'henrique123');
+user.registerCredentials('cef@usp.br', 'cef123');
+*/
+
+// console.log(user.autheticateCredentials('rafael@gmail.com', 'rafael123'));
+
+user.autheticateCredentials('rafael@gmail.com', 'rafael123').then((response) => {
+    console.log(response);
+});
 
 const port = 2020
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    return res.json({'gggg': 'fgfgfg'});
+app.get('/users/:email/:password', (req, res) => {
+    var auth = false;
+    user.autheticateCredentials(req.params.email, req.params.password).then((response) => {
+        auth = response;
+        console.log('sdnsdnfj: ' + response);
+        res.json({'email': req.params.email, 'password': req.params.password, 'authenticate': auth});
+    });
+    
 })
 
 app.listen(port, (error) => {
@@ -27,4 +36,3 @@ app.listen(port, (error) => {
         console.log('listening on port ' + port)
     }
 })
-*/

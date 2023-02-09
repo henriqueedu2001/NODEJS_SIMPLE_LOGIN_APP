@@ -4,11 +4,11 @@ const crypto = require('crypto');
 
 const saltLength = 64;
 
-function sha256(content){
+function sha256(content) {
     return crypto.createHash('sha256').update(content).digest('hex')
 }
 
-function new_salt(length){
+function new_salt(length) {
     return crypto.randomBytes(Math.ceil(length/2))
     .toString('hex')
     .slice(0,length);
@@ -40,7 +40,7 @@ const UserAuthCredentials = database.sequelize.define('UserAuthCredentials', {
     }
 });
 
-async function registerUser(email, password){
+async function registerCredentials(email, password) {
     const database = require('./db');
     await database.sequelize.sync();
 
@@ -59,7 +59,54 @@ async function registerUser(email, password){
     });
 }
 
+async function simpleSelect(){
+    const users = await UserAuthCredentials.findAll();
+    console.log(users[0].dataValues);
+    return users[0].dataValues;
+}
+
+async function autheticateCredentials(email, password) {
+    let sucess = false;
+    
+    const usersInDB = await UserAuthCredentials.findAll({
+        where: {
+            email: sha256(email)
+        }
+    });
+
+    let users = usersInDB;
+
+    if(users.length == 1){
+        let dbPassword = users[0].dataValues.password;
+        let dbSalt = users[0].dataValues.salt;
+
+        if(sha256(dbSalt + password) == dbPassword) {
+            sucess = true;
+        }
+    }
+    
+    /*
+    if(users.length == 1){
+        let dbPassword = users[0].dataValues.password;
+        let dbSalt = users[0].dataValues.salt;
+
+        console.log(users[0].dataValues);
+
+        if(sha256(dbSalt + password) == dbPassword) {
+            sucess = true;
+            console.log('sucess!!!!!');
+            return true;
+        }
+    }
+    */
+    
+
+    return sucess;
+}
+
 module.exports = {
     UserAuthCredentials,
-    registerUser
+    registerCredentials,
+    autheticateCredentials,
+    simpleSelect
 }
